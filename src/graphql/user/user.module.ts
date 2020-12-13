@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { CommonUserModule } from '@app/common/user';
+import { BusinessUserModule } from '@app/business/user';
 
 import { UserResolver } from './user.resolver';
-import { UserGraphQLService } from './user.service';
 
 @Module({
-  imports: [CommonUserModule],
-  exports: [UserGraphQLService],
-  providers: [UserResolver, UserGraphQLService],
+  imports: [BusinessUserModule],
+  exports: [],
+  providers: [UserResolver],
 })
 export class UserGraphQLModule {}
