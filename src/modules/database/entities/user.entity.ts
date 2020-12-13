@@ -1,9 +1,17 @@
-import { Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-import { BaseEntity } from '@app/models/base.entity';
+import { IUserModel } from '@app/models/data-models';
 
-@Entity({ name: 'users' })
-export class UserEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+import { BaseEntity } from './base.entity';
+
+@Entity({ name: 'user' })
+export class UserEntity extends BaseEntity implements IUserModel {
+  @PrimaryGeneratedColumn({ unsigned: true })
   public id!: number;
+
+  @Column({ name: 'cognito_user_name', type: 'varchar', length: 40, unique: true })
+  public cognitoUserName!: string;
+
+  @Column({ name: 'user_name', type: 'varchar', length: 20 })
+  public userName!: string;
 }
