@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import config from 'config';
 
-import { AppModule } from './app.module';
 import { LoggerService } from './modules/logger';
+
+import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const applicationPort = config.get<number>('application.port');
@@ -20,6 +22,8 @@ async function bootstrap(): Promise<void> {
   if (useCustomLogger) {
     app.useLogger(app.get(LoggerService));
   }
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(applicationPort);
 }
