@@ -4,10 +4,10 @@ import { DatabaseModule } from '@app/modules/database';
 import { GraphQLModule } from '@app/modules/graphql';
 import { LoggerModule } from '@app/modules/logger';
 
-import { HealthModule } from '@app/api/health';
+import { HealthAPIModule } from '@app/api/health';
 
-import { HealthModule as HealthGraphQLModule } from '@app/graphql/health';
-import { UserModule } from '@app/graphql/user';
+import { HealthGraphQLModule } from '@app/graphql/health';
+import { UserGraphQLModule } from '@app/graphql/user';
 
 @Module({
   imports: [
@@ -17,11 +17,11 @@ import { UserModule } from '@app/graphql/user';
     LoggerModule,
 
     /* API Modules */
-    HealthModule,
+    HealthAPIModule,
 
     /* GraphQL Modules */
     HealthGraphQLModule,
-    UserModule,
+    UserGraphQLModule,
   ],
   exports: [],
   controllers: [],
