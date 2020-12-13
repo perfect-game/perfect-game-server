@@ -7,6 +7,7 @@ import { LoggerModule } from '@app/modules/logger';
 import { HealthModule } from '@app/api/health';
 
 import { HealthModule as HealthGraphQLModule } from '@app/graphql/health';
+import { UserModule } from '@app/graphql/user';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { HealthModule as HealthGraphQLModule } from '@app/graphql/health';
 
     /* GraphQL Modules */
     HealthGraphQLModule,
+    UserModule,
   ],
   exports: [],
   controllers: [],
