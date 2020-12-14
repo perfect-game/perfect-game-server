@@ -1,13 +1,12 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 
-import { IUserScoreModel } from '@app/models/data-models';
 import { FrameInformationType } from '@app/models/frame-information.type';
 
 import { BaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
 
 @Entity({ name: 'user_score' })
-export class UserScoreEntity extends BaseEntity implements IUserScoreModel {
+export class UserScoreEntity extends BaseEntity {
   @PrimaryColumn({ name: 'user_id', type: 'int', unsigned: true })
   public userId!: number;
 
