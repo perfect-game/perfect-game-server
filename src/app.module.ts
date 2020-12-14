@@ -12,7 +12,7 @@ import { UserGraphQLModule } from '@app/graphql/user';
 @Module({
   imports: [
     /* Global Modules */
-    DatabaseModule,
+    DatabaseModule.forRoot(),
     GraphQLModule,
     LoggerModule,
 
