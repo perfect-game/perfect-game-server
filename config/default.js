@@ -1,4 +1,7 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
+
+require('dotenv').config();
 
 module.exports = {
   application: {
@@ -16,8 +19,8 @@ module.exports = {
     type: 'mysql',
     host: 'localhost',
     port: 3306,
-    username: 'perfect',
-    password: 'Perfect2020!',
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
     database: 'perfect',
     migrationsTableName: '_migrations',
     migrations: ['./dist/migrations/*.js'],
