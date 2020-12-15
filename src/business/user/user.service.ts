@@ -3,60 +3,82 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 import { CommonUserService } from '@app/common/user';
 import { IUserModel, ICreateUserInputModel, IUpdateUserInputModel } from '@app/models/data-models/user';
-import { UserObjectType, CreateUserInputType, UpdateUserInputType } from '@app/models/transport-models/user';
-
-import { BusinessService } from '@app/business/business.service';
+import { UserObjectType, UpdateUserInputType } from '@app/models/transport-models/user';
 
 @Injectable()
-export class BusinessUserService extends BusinessService {
-  constructor(private readonly commonUserService: CommonUserService) {
-    super();
-  }
+export class BusinessUserService {
+  constructor(private readonly commonUserService: CommonUserService) {}
 
   @Transactional()
   public async getUser(userId: number): Promise<UserObjectType> {
-    const userModel = await this.commonUserService.getUser(userId);
-    const userObject = this.convertModelToObject(userModel);
+    const userModel = await this.commonUserService.getUserById(userId);
+    const userObject = this.convertUsertModelToObject(userModel);
 
     return userObject;
   }
 
   @Transactional()
-  public async createUser(userInput: CreateUserInputType): Promise<UserObjectType> {
-    const createUserInputModel = this.convertCreateInputToModel(userInput);
+  public async getUserByAccessToken(accessToken: string): Promise<UserObjectType> {
+    const userModel = await this.commonUserService.getUserByAccessToken(accessToken);
+    const userObject = this.convertUsertModelToObject(userModel);
+
+    return userObject;
+  }
+
+  @Transactional()
+  public async createUser(accessToken: string): Promise<UserObjectType> {
+    const cognitoUser = await this.commonUserService.getCognitoUserByAccessToken(accessToken);
+    const cognitoUserName = cognitoUser.userName;
+
+    const createUserInputModel = this.convertCognitoUserNameToCreateUserInstanceInputModel(cognitoUserName);
     const userModel = await this.commonUserService.createUser(createUserInputModel);
-    const userObject = this.convertModelToObject(userModel);
+
+    const userObject = this.convertUsertModelToObject(userModel);
 
     return userObject;
   }
 
   @Transactional()
   public async updateUser(userId: number, userInput: UpdateUserInputType): Promise<UserObjectType> {
-    const updateUserInputModel = this.convertUpdateInputToModel(userInput);
+    const updateUserInputModel = this.convertUserInputToUpdateInputModel(userInput);
     const userModel = await this.commonUserService.updateUser(userId, updateUserInputModel);
-    const userObject = this.convertModelToObject(userModel);
+    const userObject = this.convertUsertModelToObject(userModel);
 
     return userObject;
   }
 
   @Transactional()
   public async enableUser(userId: number): Promise<boolean> {
-    const result = await this.commonUserService.enableUser(userId);
+    await this.commonUserService.enableUser(userId);
 
-    return result;
+    return true;
   }
 
   @Transactional()
   public async disableUser(userId: number): Promise<boolean> {
-    const result = await this.commonUserService.disableUser(userId);
+    await this.commonUserService.disableUser(userId);
 
-    return result;
+    return true;
   }
 
-  protected convertModelToObject(model: IUserModel): UserObjectType {
+  @Transactional()
+  public async deleteUser(userId: number): Promise<boolean> {
+    await this.commonUserService.deleteUser(userId);
+
+    return true;
+  }
+
+  protected convertUsertModelToObject(model: IUserModel): UserObjectType {
     const object: UserObjectType = {
       id: model.id,
-      userName: model.userName,
+      cognitoUserName: model.cognitoUserName,
+      email: model.email,
+      emailVerified: model.emailVerified,
+      phoneNumber: model.phoneNumber,
+      phoneNumberVerified: model.phoneNumberVerified,
+      nickname: model.nickname,
+      locale: model.locale,
+      gender: model.gender,
       disabledAt: model.disabledAt,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
@@ -65,18 +87,20 @@ export class BusinessUserService extends BusinessService {
     return object;
   }
 
-  protected convertCreateInputToModel(input: CreateUserInputType): ICreateUserInputModel {
+  private convertCognitoUserNameToCreateUserInstanceInputModel(cognitoUserName: string): ICreateUserInputModel {
     const model: ICreateUserInputModel = {
-      cognitoUserName: input.cognitoUserName,
-      userName: input.userName,
+      cognitoUserName,
     };
 
     return model;
   }
 
-  protected convertUpdateInputToModel(input: UpdateUserInputType): IUpdateUserInputModel {
+  private convertUserInputToUpdateInputModel(input: UpdateUserInputType): IUpdateUserInputModel {
     const model: IUpdateUserInputModel = {
-      userName: input.userName,
+      nickname: input.nickname,
+      phoneNumber: input.phoneNumber,
+      locale: input.locale,
+      gender: input.gender,
     };
 
     return model;

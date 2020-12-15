@@ -1,3 +1,4 @@
-import { UserEntity } from '@app/modules/database/entities';
+import { IUserInstanceModel } from './user-instance.model';
+import { ICognitoUserModel } from './cognito-user.model';
 
-export interface IUserModel extends UserEntity {}
+export interface IUserModel extends IUserInstanceModel, ICognitoUserModel {}

@@ -1,7 +1,8 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Context, Args, Int } from '@nestjs/graphql';
 
+import { IGraphQLContext } from '@app/modules/graphql';
 import { BusinessUserService } from '@app/business/user';
-import { UserObjectType, CreateUserInputType, UpdateUserInputType } from '@app/models/transport-models/user';
+import { UserObjectType, UpdateUserInputType } from '@app/models/transport-models/user';
 
 @Resolver()
 export class UserResolver {
@@ -15,10 +16,14 @@ export class UserResolver {
   }
 
   @Mutation((returns) => UserObjectType)
-  public async createUser(
-    @Args('user', { type: () => CreateUserInputType }) userInput: CreateUserInputType,
-  ): Promise<UserObjectType> {
-    const userObject = await this.businessUserService.createUser(userInput);
+  public async createUser(@Context() context: IGraphQLContext): Promise<UserObjectType> {
+    const accessToken = context.accessToken;
+
+    if (!accessToken) {
+      throw new Error('No exists access token in GraphQL context.');
+    }
+
+    const userObject = await this.businessUserService.createUser(accessToken);
 
     return userObject;
   }
@@ -35,15 +40,22 @@ export class UserResolver {
 
   @Mutation((returns) => Boolean)
   public async enableUser(@Args('userId', { type: () => Int }) userId: number): Promise<boolean> {
-    const result = await this.businessUserService.enableUser(userId);
+    await this.businessUserService.enableUser(userId);
 
-    return result;
+    return true;
   }
 
   @Mutation((returns) => Boolean)
   public async disableUser(@Args('userId', { type: () => Int }) userId: number): Promise<boolean> {
-    const result = await this.businessUserService.disableUser(userId);
+    await this.businessUserService.disableUser(userId);
 
-    return result;
+    return true;
+  }
+
+  @Mutation((returns) => Boolean)
+  public async deleteUser(@Args('userId', { type: () => Int }) userId: number): Promise<boolean> {
+    await this.businessUserService.deleteUser(userId);
+
+    return true;
   }
 }

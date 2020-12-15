@@ -1,3 +1,3 @@
-import { IUserModel } from './user.model';
+import { ICreateUserInstanceInputModel } from './create-user-instance.input-model';
 
-export interface ICreateUserInputModel extends Pick<IUserModel, 'cognitoUserName' | 'userName'> {}
+export interface ICreateUserInputModel extends ICreateUserInstanceInputModel {}
