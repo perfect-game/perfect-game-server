@@ -1,7 +1,17 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
 
-require('dotenv').config();
+const dotenv = require('dotenv');
+const path = require('path');
+
+const defaultDotenvPath = path.join(__dirname, '../');
+
+[
+  path.join(defaultDotenvPath, '.env.local'),
+  path.join(defaultDotenvPath, `.env.${process.env.NODE_ENV}.local`),
+  path.join(defaultDotenvPath, `.env.${process.env.NODE_ENV}`),
+  path.join(defaultDotenvPath, '.env'),
+].forEach((path) => dotenv.config({ path }));
 
 module.exports = {
   application: {
@@ -14,6 +24,14 @@ module.exports = {
     },
     useNativeLogger: true,
     useCustomLogger: true,
+  },
+  logger: {
+    level: 'verbose',
+    transports: ['console'],
+    httpTransportOptions: {
+      host: 'localhost',
+      port: 10000,
+    },
   },
   database: {
     type: 'mysql',
@@ -33,12 +51,12 @@ module.exports = {
       migrationsDir: 'migrations',
     },
   },
-  logger: {
-    level: 'verbose',
-    transports: ['console'],
-    httpTransportOptions: {
-      host: 'localhost',
-      port: 10000,
+  aws: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    cognito: {
+      region: 'ap-northeast-2',
+      userPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
     },
   },
 };
