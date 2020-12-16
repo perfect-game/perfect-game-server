@@ -1,4 +1,4 @@
-# Perfect Server
+# Perfect Game Server
 
 ## Scripts
 

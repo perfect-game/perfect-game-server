@@ -28,7 +28,7 @@ module.exports = {
     port: 3306,
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
-    database: 'perfect',
+    database: 'perfect_game',
     migrationsTableName: '_migrations',
     migrations: ['./dist/migrations/*.js'],
     synchronize: true,
