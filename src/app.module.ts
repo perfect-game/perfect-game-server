@@ -8,6 +8,7 @@ import { HealthAPIModule } from '@app/api/health';
 
 import { HealthGraphQLModule } from '@app/graphql/health';
 import { UserGraphQLModule } from '@app/graphql/user';
+import { ScoreGraphQLModule } from '@app/graphql/score';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserGraphQLModule } from '@app/graphql/user';
     /* GraphQL Modules */
     HealthGraphQLModule,
     UserGraphQLModule,
+    ScoreGraphQLModule,
   ],
   exports: [],
   controllers: [],
