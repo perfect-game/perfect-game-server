@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
+import { UserTypeType } from '@app/models/user-type.type';
 import { CommonUserService, IUserModel, ICreateUserInputModel, IUpdateUserInputModel } from '@app/common/user';
 
 import { UserObjectType, UpdateUserInputType } from './transport-models';
@@ -49,14 +50,39 @@ export class BusinessUserService {
 
   @Transactional()
   public async enableUser(userId: number): Promise<boolean> {
-    await this.commonUserService.enableUser(userId);
+    const userModel = await this.commonUserService.getUserById(userId);
+
+    if (!userModel.disabledAt) {
+      throw new Error('The user is enabled already.');
+    }
+
+    const updateUserInputModel: Partial<IUpdateUserInputModel> = { disabledAt: null };
+
+    await this.commonUserService.updateUser(userId, updateUserInputModel);
 
     return true;
   }
 
   @Transactional()
   public async disableUser(userId: number): Promise<boolean> {
-    await this.commonUserService.disableUser(userId);
+    const userModel = await this.commonUserService.getUserById(userId);
+
+    if (userModel.disabledAt) {
+      throw new Error('The user is disabled already.');
+    }
+
+    const updateUserInputModel: Partial<IUpdateUserInputModel> = { disabledAt: new Date() };
+
+    await this.commonUserService.updateUser(userId, updateUserInputModel);
+
+    return true;
+  }
+
+  @Transactional()
+  public async changeUserType(userId: number, userType: UserTypeType): Promise<boolean> {
+    const updateUserInputModel: Partial<IUpdateUserInputModel> = { type: userType };
+
+    await this.commonUserService.updateUser(userId, updateUserInputModel);
 
     return true;
   }
@@ -96,8 +122,8 @@ export class BusinessUserService {
     return model;
   }
 
-  private convertUserInputToUpdateInputModel(input: UpdateUserInputType): IUpdateUserInputModel {
-    const model: IUpdateUserInputModel = {
+  private convertUserInputToUpdateInputModel(input: UpdateUserInputType): Partial<IUpdateUserInputModel> {
+    const model: Partial<IUpdateUserInputModel> = {
       nickname: input.nickname,
       phoneNumber: input.phoneNumber,
       locale: input.locale,

@@ -1,6 +1,7 @@
 import { Resolver, Query, Mutation, Context, Args, Int } from '@nestjs/graphql';
 
 import { IGraphQLContext } from '@app/modules/graphql';
+import { UserTypeType } from '@app/models/user-type.type';
 import { BusinessUserService, UserObjectType, UpdateUserInputType } from '@app/business/user';
 
 @Resolver()
@@ -47,6 +48,16 @@ export class UserResolver {
   @Mutation((returns) => Boolean)
   public async disableUser(@Args('userId', { type: () => Int }) userId: number): Promise<boolean> {
     await this.businessUserService.disableUser(userId);
+
+    return true;
+  }
+
+  @Mutation((returns) => Boolean)
+  public async changeUserType(
+    @Args('userId', { type: () => Int }) userId: number,
+    @Args('userType', { type: () => UserTypeType }) userType: UserTypeType,
+  ): Promise<boolean> {
+    await this.businessUserService.changeUserType(userId, userType);
 
     return true;
   }

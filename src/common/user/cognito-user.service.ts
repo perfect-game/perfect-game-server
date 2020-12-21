@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 
-import { getEnumKeyByEnumValue, getEnumValueByEnumKey } from '@app/utils/enum-utils';
+import { getEnumKeyByEnumValue, getEnumValueByEnumKey, isEmpty } from '@app/utils';
 
 import { ICognitoUserModel, IUpdateCognitoUserInputModel } from '@app/common/user/data-models';
 import { LocaleType } from '@app/models/locale.type';
@@ -29,7 +29,7 @@ export class CognitoUserService {
 
   public async updateCognitoUser(
     cognitoUserName: string,
-    updateCognitoUserInputModel: IUpdateCognitoUserInputModel,
+    updateCognitoUserInputModel: Partial<IUpdateCognitoUserInputModel>,
   ): Promise<ICognitoUserModel> {
     const cognitoUserAttributes = this.convertUpdateCognitoUserInputModelToCognitoUserAttributes(
       updateCognitoUserInputModel,
@@ -121,7 +121,7 @@ export class CognitoUserService {
   }
 
   private convertUpdateCognitoUserInputModelToCognitoUserAttributes(
-    updateCognitoUserInputModel: IUpdateCognitoUserInputModel,
+    updateCognitoUserInputModel: Partial<IUpdateCognitoUserInputModel>,
   ): CognitoIdentityServiceProvider.AttributeType[] {
     const phoneNumber = updateCognitoUserInputModel.phoneNumber;
     const nickname = updateCognitoUserInputModel.nickname;
@@ -129,10 +129,10 @@ export class CognitoUserService {
     const gender = updateCognitoUserInputModel.gender;
 
     const cognitoUserAttributes: CognitoIdentityServiceProvider.AttributeType[] = [
-      { Name: 'phone_number', Value: phoneNumber ? String(phoneNumber) : undefined },
-      { Name: 'nickname', Value: nickname ? String(nickname) : undefined },
-      { Name: 'locale', Value: locale ? String(locale) : undefined },
-      { Name: 'gender', Value: gender ? String(gender) : undefined },
+      { Name: 'phone_number', Value: !isEmpty(phoneNumber) ? String(phoneNumber) : undefined },
+      { Name: 'nickname', Value: !isEmpty(nickname) ? String(nickname) : undefined },
+      { Name: 'locale', Value: !isEmpty(locale) ? String(locale) : undefined },
+      { Name: 'gender', Value: !isEmpty(gender) ? String(gender) : undefined },
     ].filter((cognitoUserAttribute) => !!cognitoUserAttribute.Value);
 
     return cognitoUserAttributes;

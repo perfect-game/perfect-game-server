@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserEntity } from '@app/entities';
+import { isEmpty } from '@app/utils';
 
 import { UserRepository } from './user.repository';
 import { CognitoUserService } from './cognito-user.service';
@@ -61,8 +62,12 @@ export class CommonUserService {
     return userModel;
   }
 
-  public async updateUser(userId: number, userInputModel: IUpdateUserInputModel): Promise<IUserModel> {
+  public async updateUser(userId: number, userInputModel: Partial<IUpdateUserInputModel>): Promise<IUserModel> {
     let userInstance = await this.userRepository.getUserById(userId);
+
+    if (userInputModel.type !== undefined) {
+      userInstance.type = userInputModel.type;
+    }
 
     userInstance = await this.userRepository.save({ ...userInstance, id: userId });
 
@@ -78,42 +83,6 @@ export class CommonUserService {
     const userModel = this.mergeUserInstanceModelAndCognitoUserModel(userInstanceModel, cognitoUserModel);
 
     return userModel;
-  }
-
-  public async enableUser(userId: number): Promise<boolean> {
-    const userInstance = await this.userRepository.getUserById(userId);
-
-    if (!userInstance.disabledAt) {
-      throw new Error('The user is enabled already.');
-    }
-
-    userInstance.disabledAt = null;
-
-    await this.userRepository.save(userInstance);
-
-    const cognitoUserName = userInstance.cognitoUserName;
-
-    await this.cognitoUserService.enableUser(cognitoUserName);
-
-    return true;
-  }
-
-  public async disableUser(userId: number): Promise<boolean> {
-    const userInstance = await this.userRepository.getUserById(userId);
-
-    if (userInstance.disabledAt) {
-      throw new Error('The user is disabled already.');
-    }
-
-    userInstance.disabledAt = new Date();
-
-    await this.userRepository.save(userInstance);
-
-    const cognitoUserName = userInstance.cognitoUserName;
-
-    await this.cognitoUserService.disableUser(cognitoUserName);
-
-    return true;
   }
 
   public async deleteUser(userId: number): Promise<boolean> {
@@ -154,9 +123,9 @@ export class CommonUserService {
   }
 
   private convertUserInputModelToCognitoUserUpdateInputModel(
-    userInputModel: IUpdateUserInputModel,
-  ): IUpdateCognitoUserInputModel {
-    const updateCognitoUserInputModel: IUpdateCognitoUserInputModel = {
+    userInputModel: Partial<IUpdateUserInputModel>,
+  ): Partial<IUpdateCognitoUserInputModel> {
+    const updateCognitoUserInputModel: Partial<IUpdateCognitoUserInputModel> = {
       phoneNumber: userInputModel.phoneNumber,
       nickname: userInputModel.nickname,
       locale: userInputModel.locale,
