@@ -95,21 +95,21 @@ export class BusinessUserService {
   }
 
   protected convertUsertModelToObject(model: IUserModel): UserObjectType {
-    const object: UserObjectType = {
-      id: model.id,
-      type: model.type,
-      cognitoUserName: model.cognitoUserName,
-      email: model.email,
-      emailVerified: model.emailVerified,
-      phoneNumber: model.phoneNumber,
-      phoneNumberVerified: model.phoneNumberVerified,
-      nickname: model.nickname,
-      locale: model.locale,
-      gender: model.gender,
-      disabledAt: model.disabledAt,
-      createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
-    };
+    const object = new UserObjectType();
+
+    object.id = model.id;
+    object.type = model.type;
+    object.cognitoUserName = model.cognitoUserName;
+    object.email = model.email;
+    object.emailVerified = model.emailVerified;
+    object.phoneNumber = model.phoneNumber;
+    object.phoneNumberVerified = model.phoneNumberVerified;
+    object.nickname = model.nickname;
+    object.locale = model.locale;
+    object.gender = model.gender;
+    object.disabledAt = model.disabledAt;
+    object.createdAt = model.createdAt;
+    object.updatedAt = model.updatedAt;
 
     return object;
   }

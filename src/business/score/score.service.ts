@@ -63,15 +63,15 @@ export class BusinessScoreService {
   }
 
   private convertModelToObject(model: IScoreInstanceModel): ScoreObjectType {
-    const object: ScoreObjectType = {
-      id: model.id,
-      userId: model.userId,
-      playedAt: model.playedAt,
-      frameInformation: model.frameInformation,
-      score: model.score,
-      createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
-    };
+    const object = new ScoreObjectType();
+
+    object.id = model.id;
+    object.userId = model.userId;
+    object.playedAt = model.playedAt;
+    object.frameInformation = model.frameInformation;
+    object.score = model.score;
+    object.createdAt = model.createdAt;
+    object.updatedAt = model.updatedAt;
 
     return object;
   }
