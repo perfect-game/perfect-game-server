@@ -143,6 +143,7 @@ export class CommonUserService {
   private convertUserInstanceToModel(instance: UserEntity): IUserInstanceModel {
     const model: IUserInstanceModel = {
       id: instance.id,
+      type: instance.type,
       cognitoUserName: instance.cognitoUserName,
       disabledAt: instance.disabledAt,
       createdAt: instance.createdAt,

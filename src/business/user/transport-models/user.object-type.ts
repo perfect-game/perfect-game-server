@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 import { IUserModel } from '@app/common/user';
+import { UserTypeType } from '@app/models/user-type.type';
 import { LocaleType } from '@app/models/locale.type';
 import { GenderType } from '@app/models/gender.type';
 
@@ -8,6 +9,9 @@ import { GenderType } from '@app/models/gender.type';
 export class UserObjectType implements Omit<IUserModel, 'userName'> {
   @Field((type) => Int)
   public id!: IUserModel['id'];
+
+  @Field((type) => UserTypeType)
+  public type!: IUserModel['type'];
 
   @Field((type) => String)
   public cognitoUserName!: IUserModel['cognitoUserName'];

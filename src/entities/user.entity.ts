@@ -1,5 +1,7 @@
 import { Entity, Unique, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
+import { UserTypeType } from '@app/models/user-type.type';
+
 import { BaseEntity } from './base.entity';
 import { ScoreEntity } from './score.entity';
 
@@ -8,6 +10,9 @@ import { ScoreEntity } from './score.entity';
 export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ unsigned: true })
   public id!: number;
+
+  @Column({ name: 'type', type: 'enum', enum: UserTypeType, default: UserTypeType.Normal })
+  public type!: UserTypeType;
 
   @Column({ name: 'cognito_user_name', type: 'varchar', length: 40, comment: 'Cognito User UUID' })
   public cognitoUserName!: string;

@@ -71,6 +71,7 @@ export class BusinessUserService {
   protected convertUsertModelToObject(model: IUserModel): UserObjectType {
     const object: UserObjectType = {
       id: model.id,
+      type: model.type,
       cognitoUserName: model.cognitoUserName,
       email: model.email,
       emailVerified: model.emailVerified,
