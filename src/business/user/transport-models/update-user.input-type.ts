@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsEnum } from 'class-validator';
+import { IsOptional, IsString, IsEnum } from 'class-validator';
 
 import { IUpdateUserInputModel } from '@app/common/user';
 import { GenderType } from '@app/models/gender.type';
@@ -9,19 +9,22 @@ import { LocaleType } from '@app/models/locale.type';
 export class UpdateUserInputType
   implements Pick<IUpdateUserInputModel, 'nickname' | 'phoneNumber' | 'locale' | 'gender'> {
   @Field((type) => String)
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  public nickname!: IUpdateUserInputModel['nickname'];
+  public nickname: IUpdateUserInputModel['nickname'];
 
   @Field((type) => String)
+  @IsOptional()
   @IsString()
-  public phoneNumber!: IUpdateUserInputModel['phoneNumber'];
+  public phoneNumber: IUpdateUserInputModel['phoneNumber'];
 
   @Field((type) => LocaleType)
+  @IsOptional()
   @IsEnum(LocaleType)
-  public locale!: IUpdateUserInputModel['locale'];
+  public locale: IUpdateUserInputModel['locale'];
 
   @Field((type) => GenderType)
+  @IsOptional()
   @IsEnum(GenderType)
-  public gender!: IUpdateUserInputModel['gender'];
+  public gender: IUpdateUserInputModel['gender'];
 }

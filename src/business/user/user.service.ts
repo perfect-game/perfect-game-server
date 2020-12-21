@@ -56,7 +56,7 @@ export class BusinessUserService {
       throw new Error('The user is enabled already.');
     }
 
-    const updateUserInputModel: Partial<IUpdateUserInputModel> = { disabledAt: null };
+    const updateUserInputModel: IUpdateUserInputModel = { disabledAt: null };
 
     await this.commonUserService.updateUser(userId, updateUserInputModel);
 
@@ -71,7 +71,7 @@ export class BusinessUserService {
       throw new Error('The user is disabled already.');
     }
 
-    const updateUserInputModel: Partial<IUpdateUserInputModel> = { disabledAt: new Date() };
+    const updateUserInputModel: IUpdateUserInputModel = { disabledAt: new Date() };
 
     await this.commonUserService.updateUser(userId, updateUserInputModel);
 
@@ -80,7 +80,7 @@ export class BusinessUserService {
 
   @Transactional()
   public async changeUserType(userId: number, userType: UserTypeType): Promise<boolean> {
-    const updateUserInputModel: Partial<IUpdateUserInputModel> = { type: userType };
+    const updateUserInputModel: IUpdateUserInputModel = { type: userType };
 
     await this.commonUserService.updateUser(userId, updateUserInputModel);
 
@@ -122,8 +122,8 @@ export class BusinessUserService {
     return model;
   }
 
-  private convertUserInputToUpdateInputModel(input: UpdateUserInputType): Partial<IUpdateUserInputModel> {
-    const model: Partial<IUpdateUserInputModel> = {
+  private convertUserInputToUpdateInputModel(input: UpdateUserInputType): IUpdateUserInputModel {
+    const model: IUpdateUserInputModel = {
       nickname: input.nickname,
       phoneNumber: input.phoneNumber,
       locale: input.locale,

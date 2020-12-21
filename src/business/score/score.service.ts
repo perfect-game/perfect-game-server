@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
-import { CommonScoreService, IScoreInstanceModel, IScoreInstanceInputModel } from '@app/common/score';
+import {
+  CommonScoreService,
+  IScoreInstanceModel,
+  ICreateScoreInstanceInputModel,
+  IUpdateScoreInstanceInputModel,
+} from '@app/common/score';
 
-import { ScoreObjectType, ScoreInputType } from './transport-models';
+import { ScoreObjectType, CreateScoreInputType, UpdateScoreInputType } from './transport-models';
 
 @Injectable()
 export class BusinessScoreService {
@@ -26,8 +31,8 @@ export class BusinessScoreService {
   }
 
   @Transactional()
-  public async createScore(userId: number, scoreInput: ScoreInputType): Promise<ScoreObjectType> {
-    const scoreInputModel = this.convertInputToInputModel(userId, scoreInput);
+  public async createScore(userId: number, scoreInput: CreateScoreInputType): Promise<ScoreObjectType> {
+    const scoreInputModel = this.convertCreateInputToCreateInputModel(userId, scoreInput);
     const scoreModel = await this.commonScoreService.createScore(scoreInputModel);
     const scoreObject = this.convertModelToObject(scoreModel);
 
@@ -35,8 +40,8 @@ export class BusinessScoreService {
   }
 
   @Transactional()
-  public async updateScore(scoreId: number, userId: number, scoreInput: ScoreInputType): Promise<ScoreObjectType> {
-    const scoreInputModel = this.convertInputToInputModel(userId, scoreInput);
+  public async updateScore(scoreId: number, scoreInput: UpdateScoreInputType): Promise<ScoreObjectType> {
+    const scoreInputModel = this.convertUpdateInputToUpdateInputModel(scoreInput);
     const scoreModel = await this.commonScoreService.updateScore(scoreId, scoreInputModel);
     const scoreObject = this.convertModelToObject(scoreModel);
 
@@ -71,9 +76,22 @@ export class BusinessScoreService {
     return object;
   }
 
-  private convertInputToInputModel(userId: number, input: ScoreInputType): IScoreInstanceInputModel {
-    const inputModel: IScoreInstanceInputModel = {
+  private convertCreateInputToCreateInputModel(
+    userId: number,
+    input: CreateScoreInputType,
+  ): ICreateScoreInstanceInputModel {
+    const inputModel: ICreateScoreInstanceInputModel = {
       userId,
+      frameInformation: input.frameInformation,
+      playedAt: input.playedAt,
+      score: input.score,
+    };
+
+    return inputModel;
+  }
+
+  private convertUpdateInputToUpdateInputModel(input: UpdateScoreInputType): IUpdateScoreInstanceInputModel {
+    const inputModel: IUpdateScoreInstanceInputModel = {
       frameInformation: input.frameInformation,
       playedAt: input.playedAt,
       score: input.score,

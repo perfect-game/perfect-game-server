@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserEntity } from '@app/entities';
-import { isEmpty } from '@app/utils';
 
 import { UserRepository } from './user.repository';
 import { CognitoUserService } from './cognito-user.service';
@@ -47,6 +46,7 @@ export class CommonUserService {
 
   public async createUser(userInputModel: ICreateUserInputModel): Promise<IUserModel> {
     let userInstance = this.userRepository.create();
+    userInstance = { ...userInstance, ...userInputModel };
 
     userInstance.cognitoUserName = userInputModel.cognitoUserName;
 
@@ -62,19 +62,16 @@ export class CommonUserService {
     return userModel;
   }
 
-  public async updateUser(userId: number, userInputModel: Partial<IUpdateUserInputModel>): Promise<IUserModel> {
+  public async updateUser(userId: number, userInputModel: IUpdateUserInputModel): Promise<IUserModel> {
     let userInstance = await this.userRepository.getUserById(userId);
-
-    if (userInputModel.type !== undefined) {
-      userInstance.type = userInputModel.type;
-    }
+    userInstance = { ...userInstance, ...userInputModel };
 
     userInstance = await this.userRepository.save({ ...userInstance, id: userId });
 
     const userInstanceModel = this.convertUserInstanceToModel(userInstance);
 
     const cognitoUserName = userInstance.cognitoUserName;
-    const updateCognitoUserInputModel = this.convertUserInputModelToCognitoUserUpdateInputModel(userInputModel);
+    const updateCognitoUserInputModel = this.convertUserUpdateInputModelToCognitoUserUpdateInputModel(userInputModel);
     const cognitoUserModel = await this.cognitoUserService.updateCognitoUser(
       cognitoUserName,
       updateCognitoUserInputModel,
@@ -122,10 +119,10 @@ export class CommonUserService {
     return model;
   }
 
-  private convertUserInputModelToCognitoUserUpdateInputModel(
-    userInputModel: Partial<IUpdateUserInputModel>,
-  ): Partial<IUpdateCognitoUserInputModel> {
-    const updateCognitoUserInputModel: Partial<IUpdateCognitoUserInputModel> = {
+  private convertUserUpdateInputModelToCognitoUserUpdateInputModel(
+    userInputModel: IUpdateUserInputModel,
+  ): IUpdateCognitoUserInputModel {
+    const updateCognitoUserInputModel: IUpdateCognitoUserInputModel = {
       phoneNumber: userInputModel.phoneNumber,
       nickname: userInputModel.nickname,
       locale: userInputModel.locale,

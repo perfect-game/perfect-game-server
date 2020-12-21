@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ScoreEntity } from '@app/entities';
 
 import { ScoreRepository } from './score.repository';
-import { IScoreInstanceModel, IScoreInstanceInputModel } from './data-models';
+import { IScoreInstanceModel, ICreateScoreInstanceInputModel, IUpdateScoreInstanceInputModel } from './data-models';
 
 @Injectable()
 export class CommonScoreService {
@@ -23,13 +23,9 @@ export class CommonScoreService {
     return scoreInstanceModels;
   }
 
-  public async createScore(scoreInput: IScoreInstanceInputModel): Promise<IScoreInstanceModel> {
+  public async createScore(scoreInput: ICreateScoreInstanceInputModel): Promise<IScoreInstanceModel> {
     let scoreInstance = this.scoreRepository.create();
-
-    scoreInstance.userId = scoreInput.userId;
-    scoreInstance.frameInformation = scoreInput.frameInformation;
-    scoreInstance.playedAt = scoreInput.playedAt;
-    scoreInstance.score = scoreInput.score;
+    scoreInstance = { ...scoreInstance, ...scoreInput };
 
     scoreInstance = await this.scoreRepository.save(scoreInstance);
 
@@ -38,12 +34,9 @@ export class CommonScoreService {
     return scoreInstanceModel;
   }
 
-  public async updateScore(scoreId: number, scoreInput: IScoreInstanceInputModel): Promise<IScoreInstanceModel> {
+  public async updateScore(scoreId: number, scoreInput: IUpdateScoreInstanceInputModel): Promise<IScoreInstanceModel> {
     let scoreInstance = await this.scoreRepository.getScoreById(scoreId);
-
-    scoreInstance.frameInformation = scoreInput.frameInformation;
-    scoreInstance.playedAt = scoreInput.playedAt;
-    scoreInstance.score = scoreInput.score;
+    scoreInstance = { ...scoreInstance, ...scoreInput };
 
     scoreInstance = await this.scoreRepository.save({ ...scoreInstance, id: scoreId });
 

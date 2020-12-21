@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 
-import { BusinessScoreService, ScoreObjectType, ScoreInputType } from '@app/business/score';
+import { BusinessScoreService, ScoreObjectType, CreateScoreInputType } from '@app/business/score';
 
 @Resolver()
 export class ScoreResolver {
@@ -16,7 +16,7 @@ export class ScoreResolver {
   @Mutation((returns) => ScoreObjectType)
   public async createScore(
     @Args('userId', { type: () => Int }) userId: number,
-    @Args('score', { type: () => ScoreInputType }) scoreInput: ScoreInputType,
+    @Args('score', { type: () => CreateScoreInputType }) scoreInput: CreateScoreInputType,
   ): Promise<ScoreObjectType> {
     const scoreObject = await this.businessScoreService.createScore(userId, scoreInput);
 
@@ -26,10 +26,9 @@ export class ScoreResolver {
   @Mutation((returns) => ScoreObjectType)
   public async updateScore(
     @Args('scoreId', { type: () => Int }) scoreId: number,
-    @Args('userId', { type: () => Int }) userId: number,
-    @Args('score', { type: () => ScoreInputType }) scoreInput: ScoreInputType,
+    @Args('score', { type: () => CreateScoreInputType }) scoreInput: CreateScoreInputType,
   ): Promise<ScoreObjectType> {
-    const scoreObject = await this.businessScoreService.updateScore(scoreId, userId, scoreInput);
+    const scoreObject = await this.businessScoreService.updateScore(scoreId, scoreInput);
 
     return scoreObject;
   }
