@@ -1,7 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 
-import { BusinessScoreService } from '@app/business/score';
-import { ScoreObjectType, ScoreInputType } from '@app/business/score/transport-models';
+import { BusinessScoreService, ScoreObjectType, ScoreInputType } from '@app/business/score';
 
 @Resolver()
 export class ScoreResolver {
