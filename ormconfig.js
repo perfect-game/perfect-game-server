@@ -1,6 +1,5 @@
-/* eslint-disable */
+import { get } from 'config';
 
-const config = require('config');
-const databaseConfig = config.get('database');
+const databaseConfig = get('database');
 
-module.exports = { ...databaseConfig };
+export default { ...databaseConfig };
