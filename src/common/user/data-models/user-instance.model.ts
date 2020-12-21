@@ -1,3 +1,3 @@
-import { UserEntity } from '@app/modules/database/entities';
+import { UserEntity } from '@app/entities';
 
 export interface IUserInstanceModel extends Omit<UserEntity, 'scores'> {}

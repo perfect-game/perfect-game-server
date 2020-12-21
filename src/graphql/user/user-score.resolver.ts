@@ -1,8 +1,8 @@
 import { Resolver, ResolveField, Parent, Int, Float } from '@nestjs/graphql';
 
 import { BusinessScoreService } from '@app/business/score';
-import { UserObjectType } from '@app/models/transport-models/user';
-import { ScoreObjectType } from '@app/models/transport-models/score';
+import { UserObjectType } from '@app/business/user/transport-models';
+import { ScoreObjectType } from '@app/business/score/transport-models';
 
 @Resolver(() => UserObjectType)
 export class UserScoreResolver {

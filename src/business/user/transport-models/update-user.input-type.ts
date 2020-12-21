@@ -1,7 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsString, IsEnum } from 'class-validator';
 
-import { IUpdateUserInputModel } from '@app/models/data-models/user';
+import { IUpdateUserInputModel } from '@app/common/user';
 import { GenderType } from '@app/models/gender.type';
 import { LocaleType } from '@app/models/locale.type';
 

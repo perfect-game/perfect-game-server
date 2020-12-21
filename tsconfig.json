@@ -24,6 +24,8 @@
       "@app/business/*": ["./src/business/*"],
       "@app/models": ["./src/models"],
       "@app/models/*": ["./src/models/*"],
+      "@app/entities": ["./src/entities"],
+      "@app/entities/*": ["./src/entities/*"],
       "@app/api": ["./src/api"],
       "@app/api/*": ["./src/api/*"],
       "@app/graphql": ["./src/graphql"],

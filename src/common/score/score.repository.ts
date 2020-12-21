@@ -1,7 +1,7 @@
 import { EntityRepository } from 'typeorm';
 import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 
-import { ScoreEntity } from '../entities';
+import { ScoreEntity } from '@app/entities';
 
 @EntityRepository(ScoreEntity)
 export class ScoreRepository extends BaseRepository<ScoreEntity> {

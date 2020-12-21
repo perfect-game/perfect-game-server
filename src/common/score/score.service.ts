@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { ScoreEntity } from '@app/modules/database/entities';
-import { ScoreRepository } from '@app/modules/database/repositories';
-import { IScoreInstanceModel, IScoreInstanceInputModel } from '@app/models/data-models/score';
+import { ScoreEntity } from '@app/entities';
+
+import { ScoreRepository } from './score.repository';
+import { IScoreInstanceModel, IScoreInstanceInputModel } from './data-models';
 
 @Injectable()
 export class CommonScoreService {

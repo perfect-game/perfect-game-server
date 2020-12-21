@@ -4,6 +4,8 @@ import { DatabaseModule } from '@app/modules/database';
 import { GraphQLModule } from '@app/modules/graphql';
 import { LoggerModule } from '@app/modules/logger';
 
+import * as Entities from '@app/entities';
+
 import { HealthAPIModule } from '@app/api/health';
 
 import { HealthGraphQLModule } from '@app/graphql/health';
@@ -13,7 +15,7 @@ import { ScoreGraphQLModule } from '@app/graphql/score';
 @Module({
   imports: [
     /* Global Modules */
-    DatabaseModule.forRoot(),
+    DatabaseModule.forRoot(Object.values(Entities)),
     GraphQLModule,
     LoggerModule,
 

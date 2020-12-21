@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Context, Args, Int } from '@nestjs/graphql';
 
 import { IGraphQLContext } from '@app/modules/graphql';
 import { BusinessUserService } from '@app/business/user';
-import { UserObjectType, UpdateUserInputType } from '@app/models/transport-models/user';
+import { UserObjectType, UpdateUserInputType } from '@app/business/user/transport-models';
 
 @Resolver()
 export class UserResolver {

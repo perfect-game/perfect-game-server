@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
-import { CommonUserService } from '@app/common/user';
-import { IUserModel, ICreateUserInputModel, IUpdateUserInputModel } from '@app/models/data-models/user';
-import { UserObjectType, UpdateUserInputType } from '@app/models/transport-models/user';
+import { CommonUserService, IUserModel, ICreateUserInputModel, IUpdateUserInputModel } from '@app/common/user';
+
+import { UserObjectType, UpdateUserInputType } from './transport-models';
 
 @Injectable()
 export class BusinessUserService {

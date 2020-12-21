@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
-import { IUserModel } from '@app/models/data-models/user';
+import { IUserModel } from '@app/common/user';
 import { LocaleType } from '@app/models/locale.type';
 import { GenderType } from '@app/models/gender.type';
 

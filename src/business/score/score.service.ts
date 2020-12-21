@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
-import { CommonScoreService } from '@app/common/score';
-import { IScoreInstanceModel, IScoreInstanceInputModel } from '@app/models/data-models/score';
-import { ScoreObjectType, ScoreInputType } from '@app/models/transport-models/score';
+import { CommonScoreService, IScoreInstanceModel, IScoreInstanceInputModel } from '@app/common/score';
+
+import { ScoreObjectType, ScoreInputType } from './transport-models';
 
 @Injectable()
 export class BusinessScoreService {

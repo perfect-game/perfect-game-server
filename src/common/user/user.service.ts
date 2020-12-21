@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '@app/modules/database/entities';
-import { UserRepository } from '@app/modules/database/repositories';
+import { UserEntity } from '@app/entities';
+
+import { UserRepository } from './user.repository';
+import { CognitoUserService } from './cognito-user.service';
 import {
   IUserModel,
   ICreateUserInputModel,
@@ -9,15 +11,13 @@ import {
   IUserInstanceModel,
   ICognitoUserModel,
   IUpdateCognitoUserInputModel,
-} from '@app/models/data-models/user';
-
-import { CognitoUserService } from './cognito-user.service';
+} from './data-models';
 
 @Injectable()
 export class CommonUserService {
   constructor(
-    private readonly cognitoUserService: CognitoUserService,
     private readonly userRepository: UserRepository,
+    private readonly cognitoUserService: CognitoUserService,
   ) {}
 
   public async getUserById(userId: number): Promise<IUserModel> {

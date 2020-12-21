@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
-import { IScoreInstanceModel } from '@app/models/data-models/score';
+import { IScoreInstanceModel } from '@app/common/score';
 
 @ObjectType()
 export class ScoreObjectType implements IScoreInstanceModel {

@@ -1,7 +1,7 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 import { IsNotEmpty, IsOptional, IsArray, IsDate, IsNumber } from 'class-validator';
 
-import { IScoreInstanceInputModel } from '@app/models/data-models/score';
+import { IScoreInstanceInputModel } from '@app/common/score';
 
 @InputType()
 export class ScoreInputType implements Omit<IScoreInstanceInputModel, 'userId'> {

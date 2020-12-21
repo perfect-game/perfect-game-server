@@ -3,7 +3,7 @@ import { CognitoIdentityServiceProvider } from 'aws-sdk';
 
 import { getEnumKeyByEnumValue, getEnumValueByEnumKey } from '@app/utils/enum-utils';
 
-import { ICognitoUserModel, IUpdateCognitoUserInputModel } from '@app/models/data-models/user';
+import { ICognitoUserModel, IUpdateCognitoUserInputModel } from '@app/common/user/data-models';
 import { LocaleType } from '@app/models/locale.type';
 import { GenderType } from '@app/models/gender.type';
 
