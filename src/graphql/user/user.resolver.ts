@@ -2,7 +2,9 @@ import { Resolver, Query, Mutation, Context, Args, Int } from '@nestjs/graphql';
 
 import { IGraphQLContext } from '@app/modules/graphql';
 import { UserTypeType } from '@app/models/user-type.type';
-import { BusinessUserService, UserObjectType, UpdateUserInputType } from '@app/business/user';
+import { BusinessUserService, IUserTransportModel } from '@app/business/user';
+
+import { UserObjectType, UpdateUserInputType } from './types';
 
 @Resolver()
 export class UserResolver {
@@ -10,7 +12,8 @@ export class UserResolver {
 
   @Query((returns) => UserObjectType)
   public async getUser(@Args('userId', { type: () => Int }) userId: number): Promise<UserObjectType> {
-    const userObject = await this.businessUserService.getUser(userId);
+    const userTransportModel = await this.businessUserService.getUser(userId);
+    const userObject = this.convertUsertModelToObject(userTransportModel);
 
     return userObject;
   }
@@ -23,7 +26,8 @@ export class UserResolver {
       throw new Error('No exists access token in GraphQL context.');
     }
 
-    const userObject = await this.businessUserService.createUser(accessToken);
+    const userTransportModel = await this.businessUserService.createUser(accessToken);
+    const userObject = this.convertUsertModelToObject(userTransportModel);
 
     return userObject;
   }
@@ -33,7 +37,8 @@ export class UserResolver {
     @Args('userId', { type: () => Int }) userId: number,
     @Args('user', { type: () => UpdateUserInputType }) userInput: UpdateUserInputType,
   ): Promise<UserObjectType> {
-    const userObject = await this.businessUserService.updateUser(userId, userInput);
+    const userTransportModel = await this.businessUserService.updateUser(userId, userInput);
+    const userObject = this.convertUsertModelToObject(userTransportModel);
 
     return userObject;
   }
@@ -67,5 +72,25 @@ export class UserResolver {
     await this.businessUserService.deleteUser(userId);
 
     return true;
+  }
+
+  private convertUsertModelToObject(transportModel: IUserTransportModel): UserObjectType {
+    const object = new UserObjectType();
+
+    object.id = transportModel.id;
+    object.type = transportModel.type;
+    object.cognitoUserName = transportModel.cognitoUserName;
+    object.email = transportModel.email;
+    object.emailVerified = transportModel.emailVerified;
+    object.phoneNumber = transportModel.phoneNumber;
+    object.phoneNumberVerified = transportModel.phoneNumberVerified;
+    object.nickname = transportModel.nickname;
+    object.locale = transportModel.locale;
+    object.gender = transportModel.gender;
+    object.disabledAt = transportModel.disabledAt;
+    object.createdAt = transportModel.createdAt;
+    object.updatedAt = transportModel.updatedAt;
+
+    return object;
   }
 }

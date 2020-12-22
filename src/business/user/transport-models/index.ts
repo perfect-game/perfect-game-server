@@ -1,2 +1,2 @@
-export * from './user.object-type';
-export * from './update-user.input-type';
+export * from './user-transport.model';
+export * from './update-user-transport.input-model';
