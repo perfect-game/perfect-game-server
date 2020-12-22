@@ -10,7 +10,7 @@ export class UserScoreResolver {
   @ResolveField((returns) => [ScoreObjectType])
   public async scores(@Parent() userObject: UserObjectType): Promise<ScoreObjectType[]> {
     const userId = userObject.id;
-    const userObjects = this.businessScoreService.getScoresByUserId(userId);
+    const userObjects = await this.businessScoreService.getScoresByUserId(userId);
 
     return userObjects;
   }
