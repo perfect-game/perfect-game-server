@@ -1,7 +1,7 @@
 import { GenderType } from '@app/models/gender.type';
 import { LocaleType } from '@app/models/locale.type';
 
-export interface ICognitoUserModel {
+export interface ICloudUserModel {
   userName: string;
   email: string;
   emailVerified: boolean;

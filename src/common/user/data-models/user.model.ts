@@ -1,4 +1,4 @@
-import { IUserInstanceModel } from './user-instance.model';
-import { ICognitoUserModel } from './cognito-user.model';
+import { IUserInstanceModel } from '@app/common/site-user';
+import { ICloudUserModel } from '@app/common/cloud-user';
 
-export interface IUserModel extends IUserInstanceModel, ICognitoUserModel {}
+export interface IUserModel extends IUserInstanceModel, ICloudUserModel {}

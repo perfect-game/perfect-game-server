@@ -1,3 +1,3 @@
-import { ICreateUserInstanceInputModel } from './create-user-instance.input-model';
+import { ICreateUserInstanceInputModel } from '@app/common/site-user';
 
 export interface ICreateUserInputModel extends ICreateUserInstanceInputModel {}

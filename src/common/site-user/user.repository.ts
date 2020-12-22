@@ -13,9 +13,9 @@ export class UserRepository extends BaseRepository<UserEntity> {
     return userInstance;
   }
 
-  public async getUserByCognitoUserName(cognitoUserName: string): Promise<UserEntity> {
+  public async getUserByCloudUserName(cloudUserName: string): Promise<UserEntity> {
     const userInstance = await this.findOneOrFail({
-      where: { cognitoUserName },
+      where: { cloudUserName },
     });
 
     return userInstance;

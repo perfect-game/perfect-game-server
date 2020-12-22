@@ -28,10 +28,10 @@ export class BusinessUserService {
 
   @Transactional()
   public async createUser(accessToken: string): Promise<IUserTransportModel> {
-    const cognitoUser = await this.commonUserService.getCognitoUserByAccessToken(accessToken);
-    const cognitoUserName = cognitoUser.userName;
+    const cloudUser = await this.commonUserService.getCloudUserByAccessToken(accessToken);
+    const cloudUserName = cloudUser.userName;
 
-    const createUserInputModel = this.convertCognitoUserNameToCreateUserInstanceInputModel(cognitoUserName);
+    const createUserInputModel = this.convertCloudUserNameToCreateUserInstanceInputModel(cloudUserName);
     const userModel = await this.commonUserService.createUser(createUserInputModel);
 
     const userObject = this.convertUsertModelToObject(userModel);
@@ -98,7 +98,7 @@ export class BusinessUserService {
     const object: IUserTransportModel = {
       id: model.id,
       type: model.type,
-      cognitoUserName: model.cognitoUserName,
+      cloudUserName: model.cloudUserName,
       email: model.email,
       emailVerified: model.emailVerified,
       phoneNumber: model.phoneNumber,
@@ -114,9 +114,9 @@ export class BusinessUserService {
     return object;
   }
 
-  private convertCognitoUserNameToCreateUserInstanceInputModel(cognitoUserName: string): ICreateUserInputModel {
+  private convertCloudUserNameToCreateUserInstanceInputModel(cloudUserName: string): ICreateUserInputModel {
     const model: ICreateUserInputModel = {
-      cognitoUserName,
+      cloudUserName: cloudUserName,
     };
 
     return model;

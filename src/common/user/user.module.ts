@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { DatabaseModule } from '@app/modules/database';
-import { CognitoModule } from '@app/modules/aws/cognito';
+import { CommonSiteUserModule } from '@app/common/site-user';
+import { CommonCloudUserModule } from '@app/common/cloud-user';
 
-import { UserRepository } from './user.repository';
 import { CommonUserService } from './user.service';
-import { CognitoUserService } from './cognito-user.service';
 
 @Module({
-  imports: [DatabaseModule.forFeature([UserRepository]), CognitoModule],
+  imports: [CommonSiteUserModule, CommonCloudUserModule],
   exports: [CommonUserService],
-  providers: [CommonUserService, CognitoUserService],
+  providers: [CommonUserService],
 })
 export class CommonUserModule {}

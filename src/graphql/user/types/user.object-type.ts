@@ -14,7 +14,7 @@ export class UserObjectType implements Omit<IUserModel, 'userName'> {
   public type!: IUserModel['type'];
 
   @Field((type) => String)
-  public cognitoUserName!: IUserModel['cognitoUserName'];
+  public cloudUserName!: IUserModel['cloudUserName'];
 
   @Field((type) => String)
   public email!: IUserModel['email'];

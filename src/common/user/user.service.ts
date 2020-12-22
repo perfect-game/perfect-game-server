@@ -2,115 +2,94 @@ import { Injectable } from '@nestjs/common';
 
 import { UserEntity } from '@app/entities';
 
-import { UserRepository } from './user.repository';
-import { CognitoUserService } from './cognito-user.service';
-import {
-  IUserModel,
-  ICreateUserInputModel,
-  IUpdateUserInputModel,
-  IUserInstanceModel,
-  ICognitoUserModel,
-  IUpdateCognitoUserInputModel,
-} from './data-models';
+import { CommonSiteUserService, IUserInstanceModel } from '@app/common/site-user';
+import { CommonCloudUserService, ICloudUserModel, IUpdateCloudUserInputModel } from '@app/common/cloud-user';
+
+import { IUserModel, ICreateUserInputModel, IUpdateUserInputModel } from './data-models';
 
 @Injectable()
 export class CommonUserService {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly cognitoUserService: CognitoUserService,
+    private readonly commonSiteUserService: CommonSiteUserService,
+    private readonly commonCloudUserService: CommonCloudUserService,
   ) {}
 
   public async getUserById(userId: number): Promise<IUserModel> {
-    const userInstance = await this.userRepository.getUserById(userId);
+    const userInstance = await this.commonSiteUserService.getUserById(userId);
     const userInstanceModel = this.convertUserInstanceToModel(userInstance);
 
-    const cognitoUserName = userInstance.cognitoUserName;
-    const cognitoUserModel = await this.cognitoUserService.getCognitoUserByUserName(cognitoUserName);
+    const cloudUserName = userInstance.cloudUserName;
+    const cloudUserModel = await this.commonCloudUserService.getCloudUserByUserName(cloudUserName);
 
-    const userModel = this.mergeUserInstanceModelAndCognitoUserModel(userInstanceModel, cognitoUserModel);
+    const userModel = this.mergeUserInstanceModelAndCloudUserModel(userInstanceModel, cloudUserModel);
 
     return userModel;
   }
 
   public async getUserByAccessToken(accessToken: string): Promise<IUserModel> {
-    const cognitoUserModel = await this.getCognitoUserByAccessToken(accessToken);
-    const cognitoUserName = cognitoUserModel.userName;
+    const cloudUserModel = await this.getCloudUserByAccessToken(accessToken);
+    const cloudUserName = cloudUserModel.userName;
 
-    const userInstance = await this.userRepository.getUserByCognitoUserName(cognitoUserName);
+    const userInstance = await this.commonSiteUserService.getUserByCloudUserName(cloudUserName);
     const userInstanceModel = this.convertUserInstanceToModel(userInstance);
 
-    const userModel = this.mergeUserInstanceModelAndCognitoUserModel(userInstanceModel, cognitoUserModel);
+    const userModel = this.mergeUserInstanceModelAndCloudUserModel(userInstanceModel, cloudUserModel);
 
     return userModel;
   }
 
   public async createUser(userInputModel: ICreateUserInputModel): Promise<IUserModel> {
-    let userInstance = this.userRepository.create();
-    userInstance = { ...userInstance, ...userInputModel };
+    const userInstanceModel = await this.commonSiteUserService.createUser(userInputModel);
 
-    userInstance.cognitoUserName = userInputModel.cognitoUserName;
+    const cloudUserName = userInstanceModel.cloudUserName;
+    const cloudUserModel = await this.commonCloudUserService.getCloudUserByUserName(cloudUserName);
 
-    userInstance = await this.userRepository.save(userInstance);
-
-    const userInstanceModel = this.convertUserInstanceToModel(userInstance);
-
-    const cognitoUserName = userInstance.cognitoUserName;
-    const cognitoUserModel = await this.cognitoUserService.getCognitoUserByUserName(cognitoUserName);
-
-    const userModel = this.mergeUserInstanceModelAndCognitoUserModel(userInstanceModel, cognitoUserModel);
+    const userModel = this.mergeUserInstanceModelAndCloudUserModel(userInstanceModel, cloudUserModel);
 
     return userModel;
   }
 
   public async updateUser(userId: number, userInputModel: IUpdateUserInputModel): Promise<IUserModel> {
-    let userInstance = await this.userRepository.getUserById(userId);
-    userInstance = { ...userInstance, ...userInputModel };
+    const userInstanceModel = await this.commonSiteUserService.updateUser(userId, userInputModel);
 
-    userInstance = await this.userRepository.save({ ...userInstance, id: userId });
+    const cloudUserName = userInstanceModel.cloudUserName;
+    const updateCloudUserInputModel = this.convertUserUpdateInputModelToCloudUserUpdateInputModel(userInputModel);
+    const cloudUserModel = await this.commonCloudUserService.updateCloudUser(cloudUserName, updateCloudUserInputModel);
 
-    const userInstanceModel = this.convertUserInstanceToModel(userInstance);
-
-    const cognitoUserName = userInstance.cognitoUserName;
-    const updateCognitoUserInputModel = this.convertUserUpdateInputModelToCognitoUserUpdateInputModel(userInputModel);
-    const cognitoUserModel = await this.cognitoUserService.updateCognitoUser(
-      cognitoUserName,
-      updateCognitoUserInputModel,
-    );
-
-    const userModel = this.mergeUserInstanceModelAndCognitoUserModel(userInstanceModel, cognitoUserModel);
+    const userModel = this.mergeUserInstanceModelAndCloudUserModel(userInstanceModel, cloudUserModel);
 
     return userModel;
   }
 
   public async deleteUser(userId: number): Promise<boolean> {
-    const userInstance = await this.userRepository.getUserById(userId);
+    const userInstanceModel = await this.commonSiteUserService.getUserById(userId);
 
-    if (!userInstance.disabledAt) {
+    if (!userInstanceModel.disabledAt) {
       throw new Error('The user has to disabled first to be deleted.');
     }
 
-    userInstance.disabledAt = new Date();
+    userInstanceModel.disabledAt = new Date();
 
-    await this.userRepository.deleteUserById(userId);
+    await this.commonSiteUserService.deleteUserById(userId);
 
-    const cognitoUserName = userInstance.cognitoUserName;
+    const cloudUserName = userInstanceModel.cloudUserName;
 
-    await this.cognitoUserService.deleteUser(cognitoUserName);
+    await this.commonCloudUserService.deleteUser(cloudUserName);
 
     return true;
   }
 
-  public async getCognitoUserByAccessToken(accessToken: string): Promise<ICognitoUserModel> {
-    const cognitoUserModel = await this.cognitoUserService.getCognitoUserByAccessToken(accessToken);
+  public async getCloudUserByAccessToken(accessToken: string): Promise<ICloudUserModel> {
+    const cloudUserModel = await this.commonCloudUserService.getCloudUserByAccessToken(accessToken);
 
-    return cognitoUserModel;
+    return cloudUserModel;
   }
 
   private convertUserInstanceToModel(instance: UserEntity): IUserInstanceModel {
     const model: IUserInstanceModel = {
       id: instance.id,
       type: instance.type,
-      cognitoUserName: instance.cognitoUserName,
+      cloudUserName: instance.cloudUserName,
       disabledAt: instance.disabledAt,
       createdAt: instance.createdAt,
       updatedAt: instance.updatedAt,
@@ -119,24 +98,24 @@ export class CommonUserService {
     return model;
   }
 
-  private convertUserUpdateInputModelToCognitoUserUpdateInputModel(
+  private convertUserUpdateInputModelToCloudUserUpdateInputModel(
     userInputModel: IUpdateUserInputModel,
-  ): IUpdateCognitoUserInputModel {
-    const updateCognitoUserInputModel: IUpdateCognitoUserInputModel = {
+  ): IUpdateCloudUserInputModel {
+    const updateCloudUserInputModel: IUpdateCloudUserInputModel = {
       phoneNumber: userInputModel.phoneNumber,
       nickname: userInputModel.nickname,
       locale: userInputModel.locale,
       gender: userInputModel.gender,
     };
 
-    return updateCognitoUserInputModel;
+    return updateCloudUserInputModel;
   }
 
-  private mergeUserInstanceModelAndCognitoUserModel(
+  private mergeUserInstanceModelAndCloudUserModel(
     instanceModel: IUserInstanceModel,
-    cognitoUserModel: ICognitoUserModel,
+    cloudUserModel: ICloudUserModel,
   ): IUserModel {
-    const userModel: IUserModel = { ...instanceModel, ...cognitoUserModel };
+    const userModel: IUserModel = { ...instanceModel, ...cloudUserModel };
 
     return userModel;
   }

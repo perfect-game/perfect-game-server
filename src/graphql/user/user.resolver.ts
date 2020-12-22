@@ -79,7 +79,7 @@ export class UserResolver {
 
     object.id = transportModel.id;
     object.type = transportModel.type;
-    object.cognitoUserName = transportModel.cognitoUserName;
+    object.cloudUserName = transportModel.cloudUserName;
     object.email = transportModel.email;
     object.emailVerified = transportModel.emailVerified;
     object.phoneNumber = transportModel.phoneNumber;
