@@ -1,3 +1,3 @@
-export * from './score.object-type';
-export * from './create-score.input-type';
-export * from './update-score.input-type';
+export * from './score-transport.model';
+export * from './create-score-transport.input-model';
+export * from './update-score-transport.input-model';

@@ -8,14 +8,18 @@ import {
   IUpdateScoreInstanceInputModel,
 } from '@app/common/score';
 
-import { ScoreObjectType, CreateScoreInputType, UpdateScoreInputType } from './transport-models';
+import {
+  IScoreTransportModel,
+  ICreateScoreTransportInputModel,
+  IUpdateScoreTransportInputModel,
+} from './transport-models';
 
 @Injectable()
 export class BusinessScoreService {
   constructor(private readonly commonScoreService: CommonScoreService) {}
 
   @Transactional()
-  public async getScoreById(scoreId: number): Promise<ScoreObjectType> {
+  public async getScoreById(scoreId: number): Promise<IScoreTransportModel> {
     const scoreModel = await this.commonScoreService.getScoreById(scoreId);
     const scoreObject = this.convertModelToObject(scoreModel);
 
@@ -23,7 +27,7 @@ export class BusinessScoreService {
   }
 
   @Transactional()
-  public async getScoresByUserId(userId: number): Promise<ScoreObjectType[]> {
+  public async getScoresByUserId(userId: number): Promise<IScoreTransportModel[]> {
     const scoreModels = await this.commonScoreService.getScoresByUserId(userId);
     const scoreObjects = scoreModels.map((scoreModel) => this.convertModelToObject(scoreModel));
 
@@ -31,7 +35,7 @@ export class BusinessScoreService {
   }
 
   @Transactional()
-  public async createScore(userId: number, scoreInput: CreateScoreInputType): Promise<ScoreObjectType> {
+  public async createScore(userId: number, scoreInput: ICreateScoreTransportInputModel): Promise<IScoreTransportModel> {
     const scoreInputModel = this.convertCreateInputToCreateInputModel(userId, scoreInput);
     const scoreModel = await this.commonScoreService.createScore(scoreInputModel);
     const scoreObject = this.convertModelToObject(scoreModel);
@@ -40,7 +44,10 @@ export class BusinessScoreService {
   }
 
   @Transactional()
-  public async updateScore(scoreId: number, scoreInput: UpdateScoreInputType): Promise<ScoreObjectType> {
+  public async updateScore(
+    scoreId: number,
+    scoreInput: IUpdateScoreTransportInputModel,
+  ): Promise<IScoreTransportModel> {
     const scoreInputModel = this.convertUpdateInputToUpdateInputModel(scoreInput);
     const scoreModel = await this.commonScoreService.updateScore(scoreId, scoreInputModel);
     const scoreObject = this.convertModelToObject(scoreModel);
@@ -62,23 +69,23 @@ export class BusinessScoreService {
     return true;
   }
 
-  private convertModelToObject(model: IScoreInstanceModel): ScoreObjectType {
-    const object = new ScoreObjectType();
+  private convertModelToObject(model: IScoreInstanceModel): IScoreTransportModel {
+    const transportModel: IScoreTransportModel = {
+      id: model.id,
+      userId: model.userId,
+      playedAt: model.playedAt,
+      frameInformation: model.frameInformation,
+      score: model.score,
+      createdAt: model.createdAt,
+      updatedAt: model.updatedAt,
+    };
 
-    object.id = model.id;
-    object.userId = model.userId;
-    object.playedAt = model.playedAt;
-    object.frameInformation = model.frameInformation;
-    object.score = model.score;
-    object.createdAt = model.createdAt;
-    object.updatedAt = model.updatedAt;
-
-    return object;
+    return transportModel;
   }
 
   private convertCreateInputToCreateInputModel(
     userId: number,
-    input: CreateScoreInputType,
+    input: ICreateScoreTransportInputModel,
   ): ICreateScoreInstanceInputModel {
     const inputModel: ICreateScoreInstanceInputModel = {
       userId,
@@ -90,7 +97,7 @@ export class BusinessScoreService {
     return inputModel;
   }
 
-  private convertUpdateInputToUpdateInputModel(input: UpdateScoreInputType): IUpdateScoreInstanceInputModel {
+  private convertUpdateInputToUpdateInputModel(input: IUpdateScoreTransportInputModel): IUpdateScoreInstanceInputModel {
     const inputModel: IUpdateScoreInstanceInputModel = {
       frameInformation: input.frameInformation,
       playedAt: input.playedAt,
