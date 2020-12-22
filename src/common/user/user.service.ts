@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '@app/entities';
-
 import { CommonSiteUserService, IUserInstanceModel } from '@app/common/site-user';
 import { CommonCloudUserService, ICloudUserModel, IUpdateCloudUserInputModel } from '@app/common/cloud-user';
 
@@ -15,10 +13,9 @@ export class CommonUserService {
   ) {}
 
   public async getUserById(userId: number): Promise<IUserModel> {
-    const userInstance = await this.commonSiteUserService.getUserById(userId);
-    const userInstanceModel = this.convertUserInstanceToModel(userInstance);
+    const userInstanceModel = await this.commonSiteUserService.getUserById(userId);
 
-    const cloudUserName = userInstance.cloudUserName;
+    const cloudUserName = userInstanceModel.cloudUserName;
     const cloudUserModel = await this.commonCloudUserService.getCloudUserByUserName(cloudUserName);
 
     const userModel = this.mergeUserInstanceModelAndCloudUserModel(userInstanceModel, cloudUserModel);
@@ -30,8 +27,7 @@ export class CommonUserService {
     const cloudUserModel = await this.getCloudUserByAccessToken(accessToken);
     const cloudUserName = cloudUserModel.userName;
 
-    const userInstance = await this.commonSiteUserService.getUserByCloudUserName(cloudUserName);
-    const userInstanceModel = this.convertUserInstanceToModel(userInstance);
+    const userInstanceModel = await this.commonSiteUserService.getUserByCloudUserName(cloudUserName);
 
     const userModel = this.mergeUserInstanceModelAndCloudUserModel(userInstanceModel, cloudUserModel);
 
@@ -83,19 +79,6 @@ export class CommonUserService {
     const cloudUserModel = await this.commonCloudUserService.getCloudUserByAccessToken(accessToken);
 
     return cloudUserModel;
-  }
-
-  private convertUserInstanceToModel(instance: UserEntity): IUserInstanceModel {
-    const model: IUserInstanceModel = {
-      id: instance.id,
-      type: instance.type,
-      cloudUserName: instance.cloudUserName,
-      disabledAt: instance.disabledAt,
-      createdAt: instance.createdAt,
-      updatedAt: instance.updatedAt,
-    };
-
-    return model;
   }
 
   private convertUserUpdateInputModelToCloudUserUpdateInputModel(
